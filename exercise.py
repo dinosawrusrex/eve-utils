@@ -130,10 +130,10 @@ def _parse_htm(file_name, certain_phrasal_verbs=False):
         if isinstance(answer, bs4.element.Tag) and answer.get('value') != default_option_value:
             answers[int(answer.get('value'))] = answer.text
 
-    questions_and_answers = {}
+    questions_and_answers = []
     for question in questions:
         index, statement = _split_id_and_question(question, certain_phrasal_verbs=certain_phrasal_verbs)
-        questions_and_answers[answers[index]] = statement
+        questions_and_answers.append({'answer': answers[index], 'question': statement})
 
     return questions_and_answers
 
