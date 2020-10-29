@@ -11,21 +11,22 @@ app = firebase_admin.initialize_app(cred)
 
 db = firestore.client(app)
 
-PARENT = '0zwuF8q0eHklNDFZJAH9'
+# PARENT = '0zwuF8q0eHklNDFZJAH9'
+PARENT = 'VQvdu2OoscCzjxPk1C5s'
 
 
-if __name__ == '__main__':
+def insert_firestore(file_name):
     subcategories = db.collection('subcategories')
 
-
-    with open('data/artsentlit.json') as f:
+    with open(file_name) as f:
         data = json.load(f)
 
     for category, groups in data.items():
         doc = subcategories.document()
-        doc.create({'name': category+' Trial', 'parent': PARENT, 'createdAt': datetime.datetime.now()})
+        doc.create({'name': category, 'parent': PARENT, 'createdAt': datetime.datetime.now()})
         col = doc.collection('groups')
         for number in sorted(groups.keys(), key=lambda x: int(x)):
+            print(number)
             current = groups[number]
             group_doc = col.document()
             group_doc.create({'words': current['words'], 'createdAt': datetime.datetime.now()})
