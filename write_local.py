@@ -7,6 +7,9 @@ import requests
 import words
 import exercise
 
+import write_firestore
+
+
 CONVERSIONS = [
     'Food & Eating',
     'Transitions',
@@ -49,6 +52,8 @@ def get_definition(word, sleep=1):
 
 if __name__ == '__main__':
     current = ''
+    current_file = ''
+
     content = {}
 
     aa = content.setdefault(current, {})
@@ -57,6 +62,7 @@ if __name__ == '__main__':
         print(group)
         aa[group] = {}
         for word in _words:
+            print(word)
             word_info = aa[group].setdefault('words', {})
             info = word_info.setdefault(
                 word, {'customDefinition': '', 'dictionaryUrl': '', 'apiDefinitions': []}
@@ -83,13 +89,15 @@ if __name__ == '__main__':
 
                     info_object['phonetics'] = q['phonetics']
                     info_object['word'] = word
-    print()
+        print()
 
     for group, _exercise in exercise.parse_exercises(current).items():
+        print(group)
         exercises = aa[group].setdefault('exercises', {})
         for subgroup, subexercise in _exercise.items():
-            print(subexercise)
             exercises[subgroup] = {'questions': subexercise}
 
-    with open('', 'w+') as f:
+    with open(current_file, 'w+') as f:
         json.dump(content, f)
+
+    print(write_firestore.insert_firestore(current_file))
