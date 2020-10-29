@@ -21,7 +21,7 @@ GENERAL_CONVERSION = {
     'Structures, Places, & Objects': 'structures',
     'War, Violence, & Conflict': 'war_conflict',
     'The Political World': 'politics',
-    'Feelings, Qualities, and States': 'feelings',
+    'Feelings, Qualities, & States': 'feelings',
     'Phrasal Verbs': 'phrasalverbs'
 }
 
@@ -143,7 +143,11 @@ ANSWER_FROM_INDEX = re.compile(r's(\d+)_\d+')
 def _split_id_and_question(question, certain_phrasal_verbs=False):
 
     if not certain_phrasal_verbs:
-        if (match := ANSWER_FROM_INDEX.match(question.next_sibling.contents[0].get('id'))):
+        sibling = question.next_sibling
+        if not isinstance(sibling, bs4.Tag):
+            while isinstance(sibling, bs4.NavigableString):
+                sibling = sibling.next_sibling
+        if (match := ANSWER_FROM_INDEX.match(sibling.contents[0].get('id'))):
             index = int(match.group(1))
     else:
         index = int(question.get('id').split('_')[-1])
